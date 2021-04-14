@@ -16,6 +16,8 @@ Here is an example of assignment 3:
 ### Tasks
 The following tasks ask you to implement a ray tracer considering different light components. Your application should enable or disable each light component according to the checkboxes in the user interface (the state of each checkbox is stored in the `ambientToggle`, `diffuseToggle`, `specularToggle` and `reflectionToggle` variables).
 
+This repository also contains a scene description file (scene.json), but you are encouraged to create your own.
+
 #### Task 1
 You should implement a basic ray tracer shading points considering only the ambient component. In the skeleton code, the `render` function creates `width x height` rays, one for each pixel in the canvas. Function `trace` then traces the ray through the scene, intersecting each ray with all objects (functions `intersectObjects`, `raySphereIntersection` and `rayPlaneIntersection`). If there is an intersection, `trace` calls `shade` to shade the point.
 
@@ -38,7 +40,7 @@ After implementing the necessary functions, your rendered scene should look like
 ![Specular component](specular.png)
 
 #### Task 4
-You should consider now reflected rays. In the `shade` function, if reflection is toggled, trace **new** rays from the intersection point, and reflected considering the surface normal. You should increase the depth count when tracing the new ray with the `trace` function. The maximum recurssion depth is determined by the `maxDepth` variable and can also be adjusted via the user interface.
+You should now consider reflected rays. In the `shade` function, if the reflection checkbox is toggled, trace **new** rays from the intersection point (and reflected considering the object's normal). You should increase the depth count when tracing the new ray with the `trace` function. The maximum recurssion depth is determined by the `maxDepth` variable and can also be adjusted via the user interface.
 
 After implementing the necessary functions, your rendered scene should look like the following when considering a max depth of 1:
 
@@ -99,7 +101,6 @@ The following is an example of a scene JSON file:
 The delivery of the assignments will be done using GitHub Classes. It will not be necessary to use any external JavaScript library for your assignments. If you do find the need to use additional libraries, please send us an email or Discord message to get approval. Your assignment should contain at least the following files:
 - index.html: the main HTML file.
 - raytracer.js: assignment main source code.
-- my_scene.json: extra scene description.
 - README.md and image files: markdown readme file with a description of your program.
 
 ### Grading
