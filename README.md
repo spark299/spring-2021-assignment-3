@@ -26,7 +26,7 @@ After implementing the necessary functions, your rendered scene should look like
 ![Ambient component](ambient.png)
 
 #### Task 2
-You should now implement the Blinn-Phong model and consider the diffuse component when shading points. Remember that you need to compute a light vector in order to compute the diffuse component.
+You should now implement the Blinn-Phong model and consider the diffuse component when shading points. Remember that you need to compute a light vector in order to compute the diffuse component. You must also take into account shadows, implementing function `isInShadow` and calling it when shading the scene.
 
 After implementing it, your rendered scene should look like the following:
 
@@ -106,4 +106,4 @@ The delivery of the assignments will be done using GitHub Classes. It will not b
 ### Grading
 The code will be evaluated on Firefox. Your submission will be graded according to the quality of the image results, interactions, and correctness of the implemented algorithms. Your README.me file will also be graded. 
 
-To get a D on the assignment, your application should be able to load a JSON file in the format specified above, and ray trace a scene only considering the ambient component. To get a C on the assignment, you should also implement the diffuse component. To get a B, you should also implement the specular component. To get an A on the assignment, the application must be able to ray trace a scene considering ambient, diffuse, specular components, as well as reflection, and have a detailed readme file.
+To get a D on the assignment, your application should be able to load a JSON file in the format specified above, and ray trace a scene only considering the ambient component. To get a C on the assignment, you should also implement the diffuse component and shadows. To get a B, you should also implement the specular component. To get an A on the assignment, the application must be able to ray trace a scene considering ambient, diffuse, specular components, as well as reflection, and have a detailed readme file.
