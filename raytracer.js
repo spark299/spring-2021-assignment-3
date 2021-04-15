@@ -63,7 +63,6 @@ function intersectObjects(ray, depth) {
 
     // If no hit, retur null
 
-    return {'intersection': intersection, 'closestObj': closestObj};
 }
 
 function sphereNormal(sphere, pos) {
