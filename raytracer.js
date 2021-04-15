@@ -74,7 +74,7 @@ function sphereNormal(sphere, pos) {
 */
 function shade(ray, hit, depth) {
 
-    var object = hit.closestObj;
+    var object = hit.object;
     var color = [0,0,0];
     
     
