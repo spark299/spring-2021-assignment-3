@@ -8,7 +8,7 @@ There are four tasks, and you are free to use the skeleton code provided. The co
 - `Intersection`: contains distance to an intersection, and intersection point.
 - `Hit`: contains an intersection and a reference to the object that the ray intersected with.
 
-File `utils.js` contains some useful functions to perform dot products, multiplication of a vector by a scalar, addition, subtraction, length, as well as a function to reflect a ray along a normal.
+File `utils.js` contains some useful functions to perform dot products, multiplication of a vector by a scalar, addition, subtraction, length, as well as a function to reflect a ray considering a surface normal.
 
 Here is an example of assignment 3:
 ![Assignment 3 example](raytracer.png)
