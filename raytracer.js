@@ -1,4 +1,3 @@
-
 var scene = null;
 var maxDepth = 1;
 var background_color = [190/255, 210/255, 215/255];
@@ -98,11 +97,11 @@ function shade(ray, hit, depth) {
 /*
     Trace ray
 */
-function trace(ray, scene, depth) {
+function trace(ray, depth) {
     if(depth > maxDepth) return background_color;
-    var hit = intersectObjects(ray, scene, depth);
+    var hit = intersectObjects(ray, depth);
     if(hit != null) {
-        var color = shade(ray, hit, scene, depth);
+        var color = shade(ray, hit, depth);
         return color;
     }
     return null;
@@ -151,7 +150,7 @@ function render(element) {
             var origin = scene.camera.position;
 
             var ray = new Ray(origin, direction);
-            var color = trace(ray, scene, 0);
+            var color = trace(ray, 0);
             if(color != null) {
                 var index = x * 4 + y * width * 4;
                 data.data[index + 0] = color[0] * 255;
