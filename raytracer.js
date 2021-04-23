@@ -153,9 +153,9 @@ function render(element) {
             var color = trace(ray, 0);
             if(color != null) {
                 var index = x * 4 + y * width * 4;
-                data.data[index + 0] = color[0] * 255;
-                data.data[index + 1] = color[1] * 255;
-                data.data[index + 2] = color[2] * 255;
+                data.data[index + 0] = color[0];
+                data.data[index + 1] = color[1];
+                data.data[index + 2] = color[2];
                 data.data[index + 3] = 255;
             }
         }
