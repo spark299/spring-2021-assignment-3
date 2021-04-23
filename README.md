@@ -71,8 +71,8 @@ The following is an example of a scene JSON file:
             "color": [255,255,255],
             "specularExponent": 1,
             "specularK": 0,
-            "ambientK": 0.001,
-            "diffuseK": 0.001,
+            "ambientK": 0.1,
+            "diffuseK": 0.2,
             "reflectiveK": 0.5,
             "type": "plane"
         },
@@ -81,9 +81,9 @@ The following is an example of a scene JSON file:
             "radius": 1.25,
             "color": [255,0,0],
             "specularExponent": 1000,
-            "specularK": 0.001,
-            "ambientK": 0.001,
-            "diffuseK": 0.001,
+            "specularK": 0.1,
+            "ambientK": 0.1,
+            "diffuseK": 0.2,
             "reflectiveK": 0.25,
             "type": "sphere"
         }
