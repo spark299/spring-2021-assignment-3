@@ -114,3 +114,13 @@ This new "reflected" ray will be shot again into the scene with higher depth, us
 
 This image, multiplied by reflectiveK, will be added to the final value.
 
+The higher the maxDepth value is set to, this recursion will occur more, making the reflective image more realistic.
+
+You can compare the difference below.
+
+![result1](result1.png)
+
+This is the one with 1 depth, meaning only 1 recursion happening,
+
+![result2](result0.png)
+And this is the one with 5 depth, meaning 5 recursion
