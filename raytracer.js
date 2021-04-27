@@ -35,7 +35,25 @@ function raySphereIntersection(ray, sphere) {
     var center = sphere.center;
     var radius = sphere.radius;
 
+    var rayDirection = normalize(ray.direction);
+
     // Compute intersection
+
+    var A = dot(rayDirection, rayDirection);
+    var B = dot(rayDirection, sub(ray.origin, center)) * 2;
+    var C = dot(sub(ray.origin, center), sub(ray.origin, center)) - (radius * radius);
+
+    var Det = B*B - 4*A*C;
+    if(Det >= 0){
+        var t = (-B - Math.sqrt(Det)) / (2*A);
+        if(t>0){
+            var intersection = add(ray.origin, mult(ray.direction, t-bias));
+
+            return new Intersection(t, intersection);
+        }
+    }
+
+    return null;
 
     // If there is a intersection, return a new Intersection object with the distance and intersection point:
     // E.g., return new Intersection(t, point);
@@ -46,6 +64,24 @@ function raySphereIntersection(ray, sphere) {
 function rayPlaneIntersection(ray, plane) {
 
     // Compute intersection
+    var pnormal = normalize(plane.normal);
+    var rayDirection = normalize(ray.direction);
+    var dotproduct = dot(pnormal, rayDirection);
+    if(Math.abs(dotproduct) < 0.0001){
+        //console.log("no ray plane intersection");
+        return null;
+    }
+    else{
+        var t = dot(pnormal, sub(plane.center, ray.origin)) / dotproduct;
+        //console.log("ray plane intersection");
+        if(t >0){
+            var intersection = add(ray.origin, mult(rayDirection, t-bias));
+            
+            return new Intersection(t, intersection);
+        }
+        
+    }
+    return null;
 
     // If there is a intersection, return a dictionary with the distance and intersection point:
     // E.g., return new Intersection(t, point);
@@ -56,7 +92,38 @@ function rayPlaneIntersection(ray, plane) {
 
 function intersectObjects(ray, depth) {
 
+    var lowestDistance = Infinity;
+    var closestObject = null;
+    var closestIntersection = null;
+    for(var i=0; i < scene.objects.length; i++){
+        var object = scene.objects[i];
+        var intersection;
+        if(object.type == "plane"){
+            //console.log("im plane");
+            intersection = rayPlaneIntersection(ray, object);
+        }
+        else{
+            intersection = raySphereIntersection(ray, object);
+        }
+        if(intersection != null){
+            if(lowestDistance > intersection.distance){
+                lowestDistance = intersection.distance;
+                closestObject = object;
+                closestIntersection = intersection;
+            }
+            else{
+                // do nothing
+            }
+        }
+    }
 
+    if(closestObject == null){
+        //console.log("this cant possibly happen");
+        return null;
+    }
+    else{
+        return new Hit(closestIntersection, closestObject);
+    }
     // Loop through all objects, compute their intersection (based on object type and calling the previous two functions)
     // Return a new Hit object, with the closest intersection and closest object
 
@@ -65,6 +132,7 @@ function intersectObjects(ray, depth) {
 }
 
 function sphereNormal(sphere, pos) {
+    return normalize(sub(pos, sphere.center));
     // Return sphere normal
 }
 
@@ -76,20 +144,71 @@ function shade(ray, hit, depth) {
     var object = hit.object;
     var color = [0,0,0];
     
+    var normal;
     
+    if(object.type == "plane"){
+        normal = normalize(object.normal);
+    }
+    else{
+        normal = normalize(sphereNormal(object, hit.intersection.point));
+    }
     // Compute object normal, based on object type
     // If sphere, use sphereNormal, if not then it's a plane, use object normal
-    var normal;
-
+    
+    var totalLighting = 0;
     // Loop through all lights, computing diffuse and specular components *if not in shadow*
     var diffuse = 0;
     var specular = 0;
+    
+    for(var i =0; i < scene.lights.length; i++){
+        if(isInShadow(hit, scene.lights[i])){
+            // in shadow
+        }
+        else{
+            var lightVector = normalize(sub(scene.lights[i].position, hit.intersection.point));
+            var halfVector = normalize(add(mult(normalize(ray.direction), -1), lightVector));
+            diffuse = diffuse + object.diffuseK * dot(lightVector, normal);
+            specular = specular + object.specularK * Math.pow(dot(halfVector, normal), object.specularExponent);
 
+        }   
+    }
+
+    if(ambientToggle){
+        totalLighting = totalLighting + object.ambientK;
+    }
+    if(diffuseToggle){
+        totalLighting = totalLighting + diffuse;
+    }
+    if(specularToggle){
+        totalLighting = totalLighting + specular;
+    }
+    //console.log(totalLighting);
+    color = mult(object.color, totalLighting)
 
     // Combine colors, taking into account object constants
 
     // Handle reflection, make sure to call trace incrementing depth
 
+    //create new ray based on normal & ray & intersectin point(origin)
+
+    var oppositeRay = normalize(mult(ray.direction, -1));
+
+    var reflectionVector = sub(mult(normalize(normal), 2 * dot(oppositeRay, normalize(normal))), oppositeRay);
+
+    var newRay = new Ray(hit.intersection.point, reflectionVector);
+
+    var newColor = trace(newRay, depth +1);
+    if(newColor != null && reflectionToggle){
+        newColor = mult(newColor, object.reflectiveK);
+        color = add(color, newColor);
+    }
+    
+    //console.log(newColor);
+
+
+
+
+    
     return color;
 }
 
@@ -112,6 +231,22 @@ function isInShadow(hit, light) {
     // Check if there is an intersection between the hit.intersection.point point and the light
     // If so, return true
     // If not, return false
+
+    var contact = hit.intersection.point;
+    var lightDirection = normalize(sub(light.position, contact));
+
+    var ray = new Ray(hit.intersection.point, lightDirection);
+
+    var newHit = intersectObjects(ray, 0);
+    //console.log("what??");
+    if(newHit != null){
+        //console.log("not null!");
+        if(newHit.intersection.point != contact){
+            //console.log("return true!");
+            return true;
+        }
+    }
+    return false;
 
 }
 
