@@ -1,61 +1,14 @@
 # CS425 - Computer Graphics I (Spring 2021)
 
 ## Assignment 3: Ray tracing
-The goal of this assignment is to implement a simple ray tracer using JavaScript. You will develop an application to ray trace a scene described in an external JSON (uploaded by the user through a configuration panel). The JSON file contains camera attributes (position, fov, direction), objects in the scene (spheres or planes), as well as the position of light sources.
-
-There are four tasks, and you are free to use the skeleton code provided. The code has some comments detailing what needs to be implemented in each function; it also contains functions to handle file upload, and user interactions through the control panel. There are three main classes:
-- `Ray`: contains the origin and direction of each ray.
-- `Intersection`: contains distance to an intersection, and intersection point.
-- `Hit`: contains an intersection and a reference to the object that the ray intersected with.
-
-File `utils.js` contains some useful functions to perform dot products, multiplication of a vector by a scalar, addition, subtraction, length, as well as a function to reflect a ray considering a surface normal.
-
-Here is an example of assignment 3:
-![Assignment 3 example](raytracer.png)
-
-### Tasks
-The following tasks ask you to implement a ray tracer considering different light components. Your application should enable or disable each light component according to the checkboxes in the user interface (the state of each checkbox is stored in the `ambientToggle`, `diffuseToggle`, `specularToggle` and `reflectionToggle` variables).
-
-This repository also contains a scene description file (scene.json), but you are encouraged to create your own.
-
-#### Task 1
-You should implement a basic ray tracer shading points considering only the ambient component. In the skeleton code, the `render` function creates `width x height` rays, one for each pixel in the canvas. Function `trace` then traces the ray through the scene, intersecting each ray with all objects (functions `intersectObjects`, `raySphereIntersection` and `rayPlaneIntersection`). If there is an intersection, `trace` calls `shade` to shade the point.
-
-After implementing the necessary functions, your rendered scene should look like the following:
-
-![Ambient component](ambient.png)
-
-#### Task 2
-You should now implement the Blinn-Phong model and consider the diffuse component when shading points. Remember that you need to compute a light vector in order to compute the diffuse component. You must also take into account shadows, implementing function `isInShadow` and calling it when shading the scene.
-
-After implementing it, your rendered scene should look like the following:
-
-![Diffuse component](diffuse.png)
-
-#### Task 3
-You should take into account the specular component when shading points. Remember that you need to compute the half-way vector in order to compute the specular component.
-
-After implementing the necessary functions, your rendered scene should look like the following:
-
-![Specular component](specular.png)
-
-#### Task 4
-You should now consider reflected rays. In the `shade` function, if the reflection checkbox is toggled, trace **new** rays from the intersection point (and reflected considering the object's normal). You should increase the depth count when tracing the new ray with the `trace` function. The maximum recurssion depth is determined by the `maxDepth` variable and can also be adjusted via the user interface.
-
-After implementing the necessary functions, your rendered scene should look like the following when considering a max depth of 1:
-
-![Reflection component](reflection_1.png)
-
-And should look like the following when considering a max depth of 5:
-
-![Reflection component](reflection_5.png)
 
 
-#### JSON format
+### How to use
 
-The JSON file contains a scene description, with camera information (position, fov, direction), objects (spheres and planes), and the position of light sources. Each object contains its center position, radius (for spheres), normal (for planes), specular exponent, and specular, ambient, diffuse and reflective constants.
+On your top left corner of the webpage, there should be configuration panel with togglebox for 1.Ambient 2.Diffuse 3.Specular 4.Reflection with Scrollbar maxdepth(from 1 to 5) and Scene upload button and Render Scene button.
+The application really starts after user puts Formatted JSON file, using the file input option, then pressing render scene button.
+The format of JSON file is :
 
-The following is an example of a scene JSON file:
 
 ```javascript
 {
@@ -97,13 +50,67 @@ The following is an example of a scene JSON file:
 
 ```
 
-### Submission
-The delivery of the assignments will be done using GitHub Classes. It will not be necessary to use any external JavaScript library for your assignments. If you do find the need to use additional libraries, please send us an email or Discord message to get approval. Your assignment should contain at least the following files:
-- index.html: the main HTML file.
-- raytracer.js: assignment main source code.
-- README.md and image files: markdown readme file with a description of your program.
+### Important Code snippets
 
-### Grading
-The code will be evaluated on Firefox. Your submission will be graded according to the quality of the image results, interactions, and correctness of the implemented algorithms. Your README.me file will also be graded. 
+Rendering of the scene begins with render(element) function.
+What render function essentially does, is from the camera point, shoots a ray into specific pixel, calling the trace(ray, depth) function.
+Trace function returns the color value of specified pixel, after numorous ray tracing calculations.
 
-To get a D on the assignment, your application should be able to load a JSON file in the format specified above, and ray trace a scene only considering the ambient component. To get a C on the assignment, you should also implement the diffuse component and shadows. To get a B, you should also implement the specular component. To get an A on the assignment, the application must be able to ray trace a scene considering ambient, diffuse, specular components, as well as reflection, and have a detailed readme file.
+## Important Classes
+
+![3class](3class.png)
+
+The code makes use of three classes defined.
+Ray class defines a ray, with its origin(3d point) and direction(3d vector)
+
+Intersection class defines whenever ray intersects objects, in this programs case, either plane or sphere.
+distance denotes the t value in L(t) = e + td representation of the ray, which is basically the distance ray travel from origin to the direction.
+point denotes the 3d position of point where the intersection happens.
+
+Hit class defines the first object certain ray intersected on the scene.
+Intersection is the above-mentioned intersection class where the first intersection happened, and also object that denotes the object instance that made intersection.
+
+## Important Functions
+
+# The intersection functions
+
+![rayplane](rayplane.png)
+![raysphere](raysphere.png)
+
+Intersection functions take ray and objects as parameter, and return intersection object if they make intersection. If no intersection is made, returns null.
+
+# The IntersectObjects function
+
+![intersect](intersectObjects.png)
+
+The forementioned intersection functions are to be served in this function.
+They are used to take account of all intersection a ray makes with all objects possible.
+Then, among the intersection, the closest one (one with lowest distance) will be considered into the Hit object.
+
+# isInShadow function
+
+![shadow](shadow.png)
+
+isInshadow is a boolean function that test whether certain hit object and the point associated with it is shadow-casted by the light parameter.
+
+By shooting a ray from intersection point to the light, and seeing if anything makes intersection, we can tell that there is an object between the point and the light. Therefore, shadow.
+
+# Shade function
+
+![shade](shade.png)
+
+Shade, again, assumes that there is a ray, and it has made several intersections already from the IntersectObjects and therefore made a hit.
+From there, This sort of work as fragment shader to determine the RGB value of certain pixel.
+
+totalLighting is by default ambient + diffuse + specular. But again, could be modified by user on the configuration panel.
+
+For each light source, we determine whether certain point is in shadow, if not, calculate the diffuse and specular value.
+
+eventually, they are all added to the totalLighting, which will multiply the color by that value. Higher totalLighting will result in brighter and whiter color on the spot.
+
+then for reflection, we calculate new ray from contact point and reflection vector.
+
+This new "reflected" ray will be shot again into the scene with higher depth, using trace function to return a color value. This is the image of whatever will be reflected on the surface.
+
+This image, multiplied by reflectiveK, will be added to the final value.
+
